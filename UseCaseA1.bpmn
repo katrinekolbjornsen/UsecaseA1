@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0ni3bfb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="9.3.2">
+  <bpmn:collaboration id="Collaboration_0k3m1z1">
+    <bpmn:participant id="Participant_0r4q55y" name="Reference Information" processRef="Process_0aznr5g" />
+    <bpmn:participant id="Participant_1vus4ps" name="Process" processRef="Process_12d6nz6" />
+    <bpmn:participant id="Participant_1h0pg58" name="information exchange" processRef="Process_020p62i" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_0aznr5g" isExecutable="false">
+    <bpmn:dataObjectReference id="DataObjectReference_148b6mt" name="Manufacturer data" dataObjectRef="DataObject_06qd7tn" />
+    <bpmn:dataObject id="DataObject_06qd7tn" />
+    <bpmn:dataObjectReference id="DataObjectReference_0czcwrp" name="Requirements for structural elements by Fire safety consulant" dataObjectRef="DataObject_0ceueih" />
+    <bpmn:dataObject id="DataObject_0ceueih" />
+  </bpmn:process>
+  <bpmn:process id="Process_12d6nz6">
+    <bpmn:startEvent id="Event_0am0o36" name="Start process">
+      <bpmn:outgoing>Flow_0boa1uz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_1si9hcc" name="Import IFC model">
+      <bpmn:incoming>Flow_0boa1uz</bpmn:incoming>
+      <bpmn:incoming>Flow_0io1psv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iko5ly</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="Gateway_06dw07a" name="Does the model have any structural elements?">
+      <bpmn:incoming>Flow_1udvmbv</bpmn:incoming>
+      <bpmn:outgoing>Flow_01dnmlx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13rbec5</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="Activity_0uuzrub" name="Imported model must be updated">
+      <bpmn:incoming>Flow_01dnmlx</bpmn:incoming>
+      <bpmn:incoming>Flow_165zbqm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0io1psv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0f2r4mg" name="Find structural elements">
+      <bpmn:incoming>Flow_0iko5ly</bpmn:incoming>
+      <bpmn:outgoing>Flow_1udvmbv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="Gateway_1d3x3ji" name="Are any of the structural elements made of concrete?">
+      <bpmn:incoming>Flow_13rbec5</bpmn:incoming>
+      <bpmn:outgoing>Flow_165zbqm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ygfxho</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="Activity_08hi8t1" name="Find the dimensions of these elements">
+      <bpmn:incoming>Flow_1ygfxho</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iwvrzo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_1ymx6y9" name="Calculate the volume of each element">
+      <bpmn:incoming>Flow_0iwvrzo</bpmn:incoming>
+      <bpmn:outgoing>Flow_16zeafx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_1342a5x" name="Summarize the volumes of all elements">
+      <bpmn:incoming>Flow_16zeafx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x64zu7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0fqwew3" name="Present results">
+      <bpmn:incoming>Flow_0x64zu7</bpmn:incoming>
+      <bpmn:outgoing>Flow_12ieibo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_1dfd0ld" name="End process">
+      <bpmn:incoming>Flow_12ieibo</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_06hak3d" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0boa1uz" sourceRef="Event_0am0o36" targetRef="Activity_1si9hcc" />
+    <bpmn:sequenceFlow id="Flow_0iko5ly" sourceRef="Activity_1si9hcc" targetRef="Activity_0f2r4mg" />
+    <bpmn:sequenceFlow id="Flow_1udvmbv" sourceRef="Activity_0f2r4mg" targetRef="Gateway_06dw07a" />
+    <bpmn:sequenceFlow id="Flow_01dnmlx" name="No" sourceRef="Gateway_06dw07a" targetRef="Activity_0uuzrub" />
+    <bpmn:sequenceFlow id="Flow_0io1psv" sourceRef="Activity_0uuzrub" targetRef="Activity_1si9hcc" />
+    <bpmn:sequenceFlow id="Flow_13rbec5" name="Yes" sourceRef="Gateway_06dw07a" targetRef="Gateway_1d3x3ji" />
+    <bpmn:sequenceFlow id="Flow_165zbqm" name="No" sourceRef="Gateway_1d3x3ji" targetRef="Activity_0uuzrub" />
+    <bpmn:sequenceFlow id="Flow_1ygfxho" name="Yes" sourceRef="Gateway_1d3x3ji" targetRef="Activity_08hi8t1" />
+    <bpmn:sequenceFlow id="Flow_0iwvrzo" sourceRef="Activity_08hi8t1" targetRef="Activity_1ymx6y9" />
+    <bpmn:sequenceFlow id="Flow_16zeafx" sourceRef="Activity_1ymx6y9" targetRef="Activity_1342a5x" />
+    <bpmn:sequenceFlow id="Flow_0x64zu7" sourceRef="Activity_1342a5x" targetRef="Activity_0fqwew3" />
+    <bpmn:sequenceFlow id="Flow_12ieibo" sourceRef="Activity_0fqwew3" targetRef="Event_1dfd0ld" />
+  </bpmn:process>
+  <bpmn:process id="Process_020p62i">
+    <bpmn:dataObjectReference id="DataObjectReference_1vve3y2" name="Architectual IFC model" dataObjectRef="DataObject_1h5tnuh" />
+    <bpmn:dataObject id="DataObject_1h5tnuh" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0k3m1z1">
+      <bpmndi:BPMNShape id="Participant_0r4q55y_di" bpmnElement="Participant_0r4q55y" isHorizontal="true">
+        <dc:Bounds x="160" y="70" width="1420" height="200" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_148b6mt_di" bpmnElement="DataObjectReference_148b6mt">
+        <dc:Bounds x="252" y="145" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="225" y="202" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1pws5d6_di" bpmnElement="DataObjectReference_0czcwrp">
+        <dc:Bounds x="372" y="145" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="347" y="202" width="86" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1vus4ps_di" bpmnElement="Participant_1vus4ps" isHorizontal="true">
+        <dc:Bounds x="160" y="280" width="1420" height="360" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0boa1uz_di" bpmnElement="Flow_0boa1uz">
+        <di:waypoint x="258" y="510" />
+        <di:waypoint x="310" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iko5ly_di" bpmnElement="Flow_0iko5ly">
+        <di:waypoint x="410" y="510" />
+        <di:waypoint x="460" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1udvmbv_di" bpmnElement="Flow_1udvmbv">
+        <di:waypoint x="560" y="510" />
+        <di:waypoint x="605" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01dnmlx_di" bpmnElement="Flow_01dnmlx">
+        <di:waypoint x="630" y="485" />
+        <di:waypoint x="630" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="638" y="440" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0io1psv_di" bpmnElement="Flow_0io1psv">
+        <di:waypoint x="580" y="360" />
+        <di:waypoint x="360" y="360" />
+        <di:waypoint x="360" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13rbec5_di" bpmnElement="Flow_13rbec5">
+        <di:waypoint x="655" y="510" />
+        <di:waypoint x="765" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="492" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_165zbqm_di" bpmnElement="Flow_165zbqm">
+        <di:waypoint x="790" y="485" />
+        <di:waypoint x="790" y="360" />
+        <di:waypoint x="680" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="798" y="440" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ygfxho_di" bpmnElement="Flow_1ygfxho">
+        <di:waypoint x="815" y="510" />
+        <di:waypoint x="900" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="832" y="492" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iwvrzo_di" bpmnElement="Flow_0iwvrzo">
+        <di:waypoint x="1000" y="510" />
+        <di:waypoint x="1050" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16zeafx_di" bpmnElement="Flow_16zeafx">
+        <di:waypoint x="1150" y="510" />
+        <di:waypoint x="1200" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x64zu7_di" bpmnElement="Flow_0x64zu7">
+        <di:waypoint x="1300" y="510" />
+        <di:waypoint x="1350" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12ieibo_di" bpmnElement="Flow_12ieibo">
+        <di:waypoint x="1450" y="510" />
+        <di:waypoint x="1502" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0am0o36_di" bpmnElement="Event_0am0o36">
+        <dc:Bounds x="222" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="208" y="535" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1si9hcc_di" bpmnElement="Activity_1si9hcc">
+        <dc:Bounds x="310" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06dw07a_di" bpmnElement="Gateway_06dw07a">
+        <dc:Bounds x="605" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="591" y="542" width="78" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uuzrub_di" bpmnElement="Activity_0uuzrub">
+        <dc:Bounds x="580" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f2r4mg_di" bpmnElement="Activity_0f2r4mg">
+        <dc:Bounds x="460" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1d3x3ji_di" bpmnElement="Gateway_1d3x3ji">
+        <dc:Bounds x="765" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="746" y="542" width="89" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08hi8t1_di" bpmnElement="Activity_08hi8t1">
+        <dc:Bounds x="900" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ymx6y9_di" bpmnElement="Activity_1ymx6y9">
+        <dc:Bounds x="1050" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1342a5x_di" bpmnElement="Activity_1342a5x">
+        <dc:Bounds x="1200" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fqwew3_di" bpmnElement="Activity_0fqwew3">
+        <dc:Bounds x="1350" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cu74z0_di" bpmnElement="Event_1dfd0ld">
+        <dc:Bounds x="1502" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1489" y="535" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_1h0pg58_di" bpmnElement="Participant_1h0pg58" isHorizontal="true">
+        <dc:Bounds x="160" y="650" width="1420" height="180" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1vve3y2_di" bpmnElement="DataObjectReference_1vve3y2">
+        <dc:Bounds x="262" y="705" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="241" y="762" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
